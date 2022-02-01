@@ -1,12 +1,12 @@
 {
-  "name": "Aluracord - Matrix (peas)",
+  "name": "Aluracord - React",
   "theme": {
     "colors": {
       "primary": {
         "050": "#E3F9E5",
         "100": "#C1EAC5",
-        "200": "#A3D9A5",
-        "300": "#7BC47F",
+        "aqua": "#5FABEB",
+        "purple": "#D85FE9",
         "400": "#57AE5B",
         "500": "#3F9142",
         "600": "#2F8132",

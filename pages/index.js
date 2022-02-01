@@ -1,59 +1,66 @@
-import { Box, Button, Text, TextField, Image } from '@skynexui/components';
-import React from 'react';
-import { useRouter } from 'next/router';
-import appConfig from '../config.json';
+import appConfig from "../config.json";
+import { Box, Button, Text, TextField, Image } from "@skynexui/components";
+import { useRouter } from "next/router";
+import React from "react";
+import { FcSearch } from "react-icons/fc";
 
-function Titulo(props) {
-  const Tag = props.tag || 'h1';
+function Title(props) {
+  const Tag = props.tag || "h1";
   return (
     <>
       <Tag>{props.children}</Tag>
-      <style jsx>{`
-            ${Tag} {
-                color: ${appConfig.theme.colors.neutrals['000']};
-                font-size: 24px;
-                font-weight: 600;
-            }
-            `}</style>
+      <style jsx> {`
+        ${Tag} {
+          color: ${appConfig.theme.colors.neutrals["000"]};
+          font-size: 24px;
+          font-weight: 600;
+        }
+      `}
+      </style>
     </>
   );
 }
 
-// Componente React
-// function HomePage() {
-//     // JSX
-//     return (
-//         <div>
-//             <GlobalStyle />
-//             <Titulo tag="h2">Boas vindas de volta!</Titulo>
-//             <h2>Discord - Alura Matrix</h2>
-//         </div>
-//     )
-// }
-// export default HomePage
-
 export default function PaginaInicial() {
-  // const username = 'omariosouto';
-  const [username, setUsername] = React.useState('lkaranl');
+  const [user, setUser] = React.useState({});
   const roteamento = useRouter();
-  const imagens = {
-    mario: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/07/super-mario-bros-level-ending-1536x864.jpg)',
-    tatooine: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/07/star-wars-the-lars-homestead-at-tatooine-1536x864.jpg)',
-    matrix: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain-1536x864.jpg)',
-    livros: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/07/bookshelf-at-dunster-house-library-1536x864.jpg)',
-    windows: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/07/blue-screen-of-death-in-windows-10-1536x864.jpg)',
-    escritorio: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/industrial-style-office-1536x864.jpg)',
+  console.log(user)
+
+  async function getUserData(nome) {
+
+    const url = `https://api.github.com/users/${nome}`;
+    await fetch(url).then(resposta => {
+      if (resposta.ok) {
+        return resposta.json();
+      } else {
+        new Error('Não foi possível realizar a requisição, pois ' + resposta.statusText);
+      }
+    }).then(dados => {
+
+      const userGithub = {
+        login: dados.login,
+        name: dados.name,
+        location: dados.location,
+        public_repos: dados.public_repos,
+        followers: dados.followers,
+        avatar: dados.avatar_url
+      }
+      setUser(userGithub)
+
+      // Gambiarra
+    }).catch(err => {
+      console.error(err)
+    })
   }
-  console.log(imagens.mario)
-  const teste = 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/07/the-lord-of-the-rings-hobbit-house-entrance-1536x864.jpg)'
+
   return (
     <>
       <Box
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          // backgroundColor: appConfig.theme.colors.primary[500],
-          backgroundImage: imagens.tatooine,
-          backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
+          backgroundColor: appConfig.theme.colors.primary[400],
+          backgroundImage: 'url(/react.png)',
+          backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply', backgroundPosition: "center",
         }}
       >
         <Box
@@ -65,74 +72,98 @@ export default function PaginaInicial() {
               xs: 'column',
               sm: 'row',
             },
-            width: '100%', maxWidth: '700px',
-            borderRadius: '5px', padding: '32px', margin: '16px',
+            width: '100%', maxWidth: '600px',
+            borderRadius: '10px', padding: '32px', margin: '16px',
             boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
-            backgroundColor: appConfig.theme.colors.neutrals[700],
+            backgroundColor: appConfig.theme.colors.neutrals[100],
+            backgroundImage: 'url(/react.png)',
+            backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply', backgroundPosition: "center",
+            opacity: .9
           }}
         >
           {/* Formulário */}
           <Box
             as="form"
-            onSubmit={function (infosDoEvento) {
-              infosDoEvento.preventDefault();
-              console.log('Alguém submeteu o form');
-              roteamento.push('/chat');
-              // window.location.href = '/chat';
-            }}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
+              width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '15px',
             }}
           >
-            <Titulo tag="h2">Boas vindas de volta!</Titulo>
-            <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
+            <Title tag="h2">Boas vindas de volta!</Title>
+            <Text variant="body3" styleSheet={{ marginBottom: '15px', color: appConfig.theme.colors.neutrals[100], fontSize: "1.2rem" }}
+            >
               {appConfig.name}
             </Text>
 
-            {/* <input
-                            type="text"
-                            value={username}
-                            onChange={function (event) {
-                                console.log('usuario digitou', event.target.value);
-                                // Onde ta o valor?
-                                const valor = event.target.value;
-                                // Trocar o valor da variavel
-                                // através do React e avise quem precisa
-                                setUsername(valor);
-                            }}
-                        /> */}
-            <TextField
-              value={username}
-              onChange={function (event) {
-                console.log('usuario digitou', event.target.value);
-                // Onde ta o valor?
-                const valor = event.target.value;
-                // Trocar o valor da variavel
-                // através do React e avise quem precisa
-                setUsername(valor);
-              }}
-              fullWidth
-              textFieldColors={{
-                neutral: {
-                  textColor: appConfig.theme.colors.neutrals[200],
-                  mainColor: appConfig.theme.colors.neutrals[900],
-                  mainColorHighlight: appConfig.theme.colors.primary[500],
-                  backgroundColor: appConfig.theme.colors.neutrals[800],
-                },
-              }}
-            />
+            <div style={{
+              display: "flex", gap: "1rem"
+            }}>
+              <TextField
+                autoComplete="off"
+                onChange={function (evento) {
+                  let valor = evento.target.value
+                  const userInputValue = {
+                    ...user,
+                    login: valor,
+                    name: "",
+                    location: "",
+                    avatar: "/user_logo.png"
+                  }
+                  setUser(userInputValue)
+                }}
+                placeholder="Usuário GitHub"
+                textFieldColors={{
+                  neutral: {
+                    textColor: appConfig.theme.colors.neutrals[200],
+                    mainColor: appConfig.theme.colors.primary["purple"],
+                    mainColorHighlight: appConfig.theme.colors.primary["aqua"],
+                    backgroundColor: appConfig.theme.colors.neutrals[900],
+                  },
+                }}
+
+              />
+
+              <Button
+                type='submit'
+                label={<FcSearch size={20} />}
+                onClick={(e) => {
+                  e.preventDefault();
+                  getUserData(user.login);
+                }}
+                buttonColors={{
+                  contrastColor: appConfig.theme.colors.neutrals["000"],
+                  mainColorLight: appConfig.theme.colors.primary["100"],
+                  mainColorStrong: appConfig.theme.colors.primary["purple"],
+                }}
+                styleSheet={{
+                  padding: "4px 8px",
+                  backgroundColor: appConfig.theme.colors.neutrals[900],
+                  border: "1px solid #D85FE9",
+                  marginBottom: ".5rem"
+                }}
+              />
+            </div>
+
             <Button
               type='submit'
               label='Entrar'
-              fullWidth
+              // fullWidth
+              onClick={function (event) {
+                event.preventDefault();
+                roteamento.push("/chat")
+                // window.location.href = "/chat";
+              }}
               buttonColors={{
                 contrastColor: appConfig.theme.colors.neutrals["000"],
-                mainColor: appConfig.theme.colors.primary[500],
-                mainColorLight: appConfig.theme.colors.primary[400],
-                mainColorStrong: appConfig.theme.colors.primary[600],
+                mainColor: appConfig.theme.colors.primary["aqua"],
+                mainColorLight: appConfig.theme.colors.primary["aqua"],
+                mainColorStrong: appConfig.theme.colors.primary["purple"],
+              }}
+              styleSheet={{
+                width: "15.6rem"
               }}
             />
+
           </Box>
           {/* Formulário */}
 
@@ -145,9 +176,9 @@ export default function PaginaInicial() {
               alignItems: 'center',
               maxWidth: '200px',
               padding: '16px',
-              backgroundColor: appConfig.theme.colors.neutrals[800],
+              backgroundColor: appConfig.theme.colors.neutrals[900],
               border: '1px solid',
-              borderColor: appConfig.theme.colors.neutrals[999],
+              borderColor: appConfig.theme.colors.primary["aqua"],
               borderRadius: '10px',
               flex: 1,
               minHeight: '240px',
@@ -158,19 +189,33 @@ export default function PaginaInicial() {
                 borderRadius: '50%',
                 marginBottom: '16px',
               }}
-              src={`https://github.com/${username}.png`}
+              src={user.login !== undefined ? user.avatar : "/user_logo.png"}
             />
+            {user.login && user.login.length > 2 && (
+              <Text
+                variant="body4"
+                styleSheet={{
+                  color: appConfig.theme.colors.primary["aqua"],
+                  backgroundColor: appConfig.theme.colors.neutrals[900],
+                  padding: '3px 10px',
+                  borderRadius: '1000px'
+                }}
+              >
+                {user.name}
+              </Text>
+            )}
             <Text
               variant="body4"
               styleSheet={{
-                color: appConfig.theme.colors.neutrals[200],
+                color: appConfig.theme.colors.primary["aqua"],
                 backgroundColor: appConfig.theme.colors.neutrals[900],
                 padding: '3px 10px',
                 borderRadius: '1000px'
               }}
             >
-              {username}
+              {user.location}
             </Text>
+
           </Box>
           {/* Photo Area */}
         </Box>

@@ -1,61 +1,61 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import { FaRegCommentDots } from "react-icons/fa"
+import { FcFullTrash } from "react-icons/fc"
 import { createClient } from '@supabase/supabase-js'
 
-// Como fazer AJAX: https://medium.com/@omariosouto/entendendo-como-fazer-ajax-com-a-fetchapi-977ff20da3c6
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MDg2OTA3MywiZXhwIjoxOTU2NDQ1MDczfQ.343ibq7UYFPDdyfsfGmEqUma01RW7P7KC9U2MDAGSkI';
-const SUPABASE_URL = 'https://kysxypdmtxjlkdysdlas.supabase.co';
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMxNzYyMywiZXhwIjoxOTU4ODkzNjIzfQ.CiXKnGsRM7340FD-IBpPNdDnosEg6nYLeXt0Ew3cEsU";
+const SUPABASE_URL = "https://xsmouxfmqotfsimveirc.supabase.co";
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-
 export default function ChatPage() {
-  const [mensagem, setMensagem] = React.useState('');
+  const [mensagem, setMensagem] = React.useState("");
   const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
   React.useEffect(() => {
     supabaseClient
-      .from('mensagens')
-      .select('*')
-      .order('id', { ascending: false })
+      .from("mensagens")
+      .select("*")
+      .order("id", { ascending: false })
       .then(({ data }) => {
-        console.log('Dados da consulta:', data);
         setListaDeMensagens(data);
       });
   }, []);
 
-  function handleNovaMensagem(novaMensagem) {
+  function handleNovaMensagem(novaMensangem) {
     const mensagem = {
       // id: listaDeMensagens.length + 1,
-      de: 'vanessametonini',
-      texto: novaMensagem,
-    };
+      de: "lkaranl",
+      texto: novaMensangem,
+    }
 
     supabaseClient
-      .from('mensagens')
+      .from("mensagens")
       .insert([
-        // Tem que ser um objeto com os MESMOS CAMPOS que você escreveu no supabase
         mensagem
       ])
       .then(({ data }) => {
-        console.log('Criando mensagem: ', data);
         setListaDeMensagens([
           data[0],
           ...listaDeMensagens,
         ]);
-      });
 
-    setMensagem('');
+      })
+
+    setMensagem("");
   }
+
+
 
   return (
     <Box
       styleSheet={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        backgroundColor: appConfig.theme.colors.primary[500],
-        backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/07/the-lord-of-the-rings-hobbit-house-entrance-1536x864.jpg)`,
-        backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
-        color: appConfig.theme.colors.neutrals['000']
+        backgroundColor: appConfig.theme.colors.primary[100],
+        backgroundImage: "url(/react.png)",
+        backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply', backgroundPosition: "center",
+        color: appConfig.theme.colors.primary['aqua'],
       }}
     >
       <Box
@@ -64,11 +64,12 @@ export default function ChatPage() {
           flexDirection: 'column',
           flex: 1,
           boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
-          borderRadius: '5px',
-          backgroundColor: appConfig.theme.colors.neutrals[700],
+          border: "2px solid",
+          borderRadius: '10px',
+          backgroundColor: "rgba(0, 0, 0, .8)",
           height: '100%',
-          maxWidth: '95%',
-          maxHeight: '95vh',
+          maxWidth: '50%',
+          maxHeight: '90vh',
           padding: '32px',
         }}
       >
@@ -79,20 +80,17 @@ export default function ChatPage() {
             display: 'flex',
             flex: 1,
             height: '80%',
-            backgroundColor: appConfig.theme.colors.neutrals[600],
+            backgroundColor: "rgba(33, 41, 49, .6)",
             flexDirection: 'column',
+            border: "2px solid",
+            borderColor: appConfig.theme.colors.primary["purple"],
             borderRadius: '5px',
             padding: '16px',
           }}
         >
-          <MessageList mensagens={listaDeMensagens} />
-          {/* {listaDeMensagens.map((mensagemAtual) => {
-                        return (
-                            <li key={mensagemAtual.id}>
-                                {mensagemAtual.de}: {mensagemAtual.texto}
-                            </li>
-                        )
-                    })} */}
+
+          <MessageList mensagens={listaDeMensagens} setListaDeMensagens={setListaDeMensagens} />
+
           <Box
             as="form"
             styleSheet={{
@@ -102,14 +100,15 @@ export default function ChatPage() {
           >
             <TextField
               value={mensagem}
-              onChange={(event) => {
+              onChange={event => {
                 const valor = event.target.value;
-                setMensagem(valor);
+                setMensagem(valor)
               }}
-              onKeyPress={(event) => {
-                if (event.key === 'Enter') {
+              onKeyPress={event => {
+                if (event.key === "Enter") {
                   event.preventDefault();
-                  handleNovaMensagem(mensagem);
+                  if (!handleNovaMensagem(mensagem)) return;
+                  handleNovaMensagem(mensagem)
                 }
               }}
               placeholder="Insira sua mensagem aqui..."
@@ -125,10 +124,29 @@ export default function ChatPage() {
                 color: appConfig.theme.colors.neutrals[200],
               }}
             />
+            <Button
+              type='submit'
+              label={<FaRegCommentDots size={26} color="#5FABEB" />}
+              onClick={event => {
+                event.preventDefault();
+                handleNovaMensagem(mensagem);
+              }}
+              buttonColors={{
+                contrastColor: appConfig.theme.colors.neutrals["000"],
+                mainColorLight: appConfig.theme.colors.primary["100"],
+                mainColorStrong: "rgba(0, 0, 0, .8)",
+              }}
+              styleSheet={{
+                padding: "4px 8px",
+                backgroundColor: "rgba(0, 0, 0, .3)",
+                border: "1px solid #D85FE9",
+                marginBottom: ".5rem"
+              }}
+            />
           </Box>
         </Box>
       </Box>
-    </Box>
+    </Box >
   )
 }
 
@@ -144,6 +162,12 @@ function Header() {
           colorVariant='neutral'
           label='Logout'
           href="/"
+          styleSheet={{
+            color: appConfig.theme.colors.primary["aqua"],
+            hover: {
+              backgroundColor: appConfig.theme.colors.primary["aqua"],
+            }
+          }}
         />
       </Box>
     </>
@@ -151,19 +175,24 @@ function Header() {
 }
 
 function MessageList(props) {
-  console.log(props);
+  function handleDeletarMensagem(id) {
+    const listaFiltrada = props.mensagens.filter((mensagem) => mensagem.id !== id);
+    props.setListaDeMensagens([...listaFiltrada]);
+  }
+
   return (
     <Box
       tag="ul"
       styleSheet={{
-        overflow: 'scroll',
+        overflow: 'auto',
         display: 'flex',
         flexDirection: 'column-reverse',
         flex: 1,
-        color: appConfig.theme.colors.neutrals["000"],
+        color: appConfig.theme.colors.neutrals["100"],
         marginBottom: '16px',
       }}
     >
+
       {props.mensagens.map((mensagem) => {
         return (
           <Text
@@ -173,44 +202,85 @@ function MessageList(props) {
               borderRadius: '5px',
               padding: '6px',
               marginBottom: '12px',
+              backgroundColor: "rgba(0, 0, 0, .3)",
               hover: {
-                backgroundColor: appConfig.theme.colors.neutrals[700],
+                backgroundColor: "rgba(0, 0, 0, .8)",
               }
             }}
           >
             <Box
               styleSheet={{
                 marginBottom: '8px',
+                display: "flex",
+                alignItems: "center",
+                gap: "10px"
+
               }}
             >
               <Image
                 styleSheet={{
-                  width: '20px',
-                  height: '20px',
+                  width: '40px',
+                  height: '40px',
                   borderRadius: '50%',
                   display: 'inline-block',
                   marginRight: '8px',
                 }}
                 src={`https://github.com/${mensagem.de}.png`}
               />
-              <Text tag="strong">
+              <Text tag="strong" styleSheet={{
+                color: appConfig.theme.colors.neutrals["100"],
+              }}>
                 {mensagem.de}
               </Text>
               <Text
                 styleSheet={{
                   fontSize: '10px',
                   marginLeft: '8px',
-                  color: appConfig.theme.colors.neutrals[300],
+                  color: appConfig.theme.colors.neutrals[200],
                 }}
                 tag="span"
               >
-                {(new Date().toLocaleDateString())}
+                {(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}
               </Text>
+              <Box
+                styleSheet={{
+                  width: "100%",
+                  marginBottom: '8px',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "end",
+                  gap: "10px"
+                }}
+              >
+                <Button
+                  variant='tertiary'
+                  type='button'
+                  colorVariant='neutral'
+                  label={<FcFullTrash size={20} />}
+                  onClick={() => {
+                    handleDeletarMensagem(mensagem.id)
+                  }}
+                  styleSheet={{
+                    padding: "2px 5px",
+                    color: appConfig.theme.colors.primary["aqua"],
+                    border: "1px solid",
+                    hover: {
+                      borderColor: appConfig.theme.colors.primary["purple"],
+                      backgroundColor: "rgba(0, 0, 0, .8)"
+                    },
+                    focus: {
+                      backgroundColor: "rgba(0, 0, 0, .8)",
+                      borderColor: appConfig.theme.colors.primary["purple"]
+                    },
+                  }}
+                />
+              </Box>
             </Box>
             {mensagem.texto}
           </Text>
         );
       })}
+
     </Box>
   )
 }
